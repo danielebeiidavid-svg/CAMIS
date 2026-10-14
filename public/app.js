@@ -60,7 +60,7 @@ form.addEventListener("submit", async (event) => {
 
     try {
 
-        const response = await fetch("/api/records", {
+        const response = await fetch("/api/records", { {
             method: "POST",
 
             headers: {
