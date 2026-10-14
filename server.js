@@ -282,6 +282,143 @@ app.get("/api/records", async (req, res) => {
 });
 
 
+// ============================================================
+// CAMIS AUTOMATED REVIEW QUEUE
+// ============================================================
+
+// Add a CAMIS automated finding to the temporary review queue
+app.post("/api/automated-review", async (req, res) => {
+    try {
+        const {
+            platform,
+            postUrl,
+            potentialCategory,
+            matchedIndicators,
+            discoveryQuery
+        } = req.body;
+
+        // Required fields
+        if (!postUrl || !potentialCategory) {
+            return res.status(400).json({
+                success: false,
+                error: "Post URL and potential category are required."
+            });
+        }
+
+        // Validate URL
+        let parsedUrl;
+
+        try {
+            parsedUrl = new URL(postUrl);
+        } catch {
+            return res.status(400).json({
+                success: false,
+                error: "Invalid post URL."
+            });
+        }
+
+        if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+            return res.status(400).json({
+                success: false,
+                error: "Post URL must use HTTP or HTTPS."
+            });
+        }
+
+        // For the current prototype, automated discoveries must be Facebook.
+        if (
+            parsedUrl.hostname !== "facebook.com" &&
+            parsedUrl.hostname !== "www.facebook.com"
+        ) {
+            return res.status(400).json({
+                success: false,
+                error: "Current CAMIS prototype only accepts Facebook URLs."
+            });
+        }
+
+        const record = {
+            "Platform": platform || "Facebook",
+            "Post URL": postUrl,
+            "Potential Category": potentialCategory,
+            "Matched Indicators": matchedIndicators || null,
+            "Discovery Query": discoveryQuery || null,
+            "Review Status": "Pending"
+        };
+
+        const { data, error } = await supabase
+            .from("automated_review_queue")
+            .insert(record)
+            .select()
+            .single();
+
+        if (error) {
+            // PostgreSQL unique violation.
+            // Post URL already exists in the queue.
+            if (error.code === "23505") {
+                return res.status(409).json({
+                    success: false,
+                    duplicate: true,
+                    error: "This Facebook post already exists in the automated review queue."
+                });
+            }
+
+            console.error("Automated review insert error:", error);
+
+            return res.status(500).json({
+                success: false,
+                error: "Unable to add finding to automated review queue."
+            });
+        }
+
+        return res.status(201).json({
+            success: true,
+            message: "Finding added to automated review queue.",
+            record: data
+        });
+
+    } catch (error) {
+        console.error("POST /api/automated-review error:", error);
+
+        return res.status(500).json({
+            success: false,
+            error: "Internal server error."
+        });
+    }
+});
+
+
+// Get findings from the automated review queue
+app.get("/api/automated-review", async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from("automated_review_queue")
+            .select("*")
+            .order("Date Discovered", { ascending: false });
+
+        if (error) {
+            console.error("Automated review fetch error:", error);
+
+            return res.status(500).json({
+                success: false,
+                error: "Unable to retrieve automated review findings."
+            });
+        }
+
+        return res.json({
+            success: true,
+            total: data.length,
+            records: data
+        });
+
+    } catch (error) {
+        console.error("GET /api/automated-review error:", error);
+
+        return res.status(500).json({
+            success: false,
+            error: "Internal server error."
+        });
+    }
+});
+
 // --------------------------------------------------
 // Start server
 // --------------------------------------------------
