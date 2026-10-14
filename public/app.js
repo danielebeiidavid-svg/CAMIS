@@ -60,15 +60,15 @@ form.addEventListener("submit", async (event) => {
 
     try {
 
-        const response = await fetch("/api/records", { {
-            method: "POST",
+const response = await fetch("/api/records", {
+    method: "POST",
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+    headers: {
+        "Content-Type": "application/json"
+    },
 
-            body: JSON.stringify(record)
-        });
+    body: JSON.stringify(record)
+});
 
         const result = await response.json();
 
