@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>CAMIS | Analytics</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>CAMIS</h1>
+        <p>Consumer Affairs Monitoring & Intelligence System</p>
+    </div>
+</header>
+
+<nav class="navigation">
+
+    <a href="index.html">
+        Data Collection
+    </a>
+
+    <a href="records.html">
+        Research Records
+    </a>
+
+    <a href="analytics.html" class="active">
+        Analytics
+    </a>
+
+</nav>
+
+
+<main class="analytics-main">
+
+    <section class="analytics-header">
+
+        <h2>Research Analytics</h2>
+
+        <p class="subtitle">
+            Statistical overview of public social media research records
+            collected through CAMIS.
+        </p>
+
+    </section>
+
+
+    <!-- SUMMARY CARDS -->
+
+    <section class="summary-grid">
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Total Records
+            </span>
+
+            <strong id="totalRecordsCard">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Top Category
+            </span>
+
+            <strong id="topCategoryCard">
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Latest Collection Period
+            </span>
+
+            <strong id="latestPeriodCard">
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Researchers
+            </span>
+
+            <strong id="researcherCountCard">
+                0
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- CHART 1 -->
+
+    <section class="chart-card">
+
+        <div class="chart-heading">
+
+            <div>
+
+                <h3>
+                    Records by Collection Period
+                </h3>
+
+                <p>
+                    Number of research records identified within
+                    each two-month period.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="chart-container">
+
+            <canvas id="periodChart"></canvas>
+
+        </div>
+
+    </section>
+
+
+    <!-- CHART 2 -->
+
+    <section class="chart-card">
+
+        <div class="chart-heading">
+
+            <div>
+
+                <h3>
+                    Identified Content Categories
+                </h3>
+
+                <p>
+                    Distribution of collected records by primary
+                    identified category.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="chart-container">
+
+            <canvas id="categoryChart"></canvas>
+
+        </div>
+
+    </section>
+
+
+    <!-- CATEGORY STATISTICS -->
+
+    <section class="chart-card">
+
+        <h3>
+            Category Statistics
+        </h3>
+
+        <div class="table-container">
+
+            <table class="analytics-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            Records
+                        </th>
+
+                        <th>
+                            Percentage
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="categoryStatistics">
+
+                    <tr>
+
+                        <td colspan="3">
+                            Loading statistics...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- RESEARCHER CONTRIBUTION -->
+
+    <section class="chart-card">
+
+        <h3>
+            Researcher Contributions
+        </h3>
+
+        <div class="table-container">
+
+            <table class="analytics-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Researcher
+                        </th>
+
+                        <th>
+                            Records Submitted
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="researcherStatistics">
+
+                    <tr>
+
+                        <td colspan="2">
+                            Loading...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <div id="analyticsMessage"></div>
+
+</main>
+
+
+<script src="analytics.js"></script>
+
+</body>
+</html>

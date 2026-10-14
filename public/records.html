@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>CAMIS | Research Records</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>CAMIS</h1>
+        <p>Consumer Affairs Monitoring & Intelligence System</p>
+    </div>
+</header>
+
+
+<nav class="navigation">
+
+    <a href="index.html">
+        Data Collection
+    </a>
+
+    <a href="records.html" class="active">
+        Research Records
+    </a>
+
+   <a href="analytics.html">
+    Analytics
+</a>
+
+</nav>
+
+
+<main class="records-main">
+
+    <section class="records-card">
+
+        <div class="records-heading">
+
+            <div>
+                <h2>Research Records</h2>
+
+                <p class="subtitle">
+                    Public social media content recorded for research and review.
+                </p>
+            </div>
+
+            <div class="record-count">
+                Total Records:
+                <strong id="totalRecords">0</strong>
+            </div>
+
+        </div>
+
+
+        <!-- FILTERS -->
+
+ <div class="filters">
+
+    <div class="filter-field">
+        <label for="searchInput">Search Records</label>
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search description, URL or researcher..."
+        >
+    </div>
+
+
+    <div class="filter-field">
+        <label for="periodFilter">Collection Period</label>
+
+        <select
+            id="periodFilter"
+            title="Filter by collection period"
+        >
+            <option value="">
+                All Collection Periods
+            </option>
+
+            <option value="Table 1 (JAN - FEB)">
+                January - February
+            </option>
+
+            <option value="Table 2 (MAR - APR)">
+                March - April
+            </option>
+
+            <option value="Table 3 (MAY - JUN)">
+                May - June
+            </option>
+
+            <option value="Table 4 (JUL - AUG)">
+                July - August
+            </option>
+
+            <option value="Table 5 (SEP - OCT)">
+                September - October
+            </option>
+        </select>
+    </div>
+
+
+    <div class="filter-field">
+        <label for="categoryFilter">Content Category</label>
+
+        <select
+            id="categoryFilter"
+            title="Filter by identified content category"
+        >
+            <option value="">
+                All Categories
+            </option>
+
+            <option value="Malicious Content">
+                Malicious Content
+            </option>
+
+            <option value="Pornographic Content">
+                Pornographic Content
+            </option>
+
+            <option value="Illicit Content">
+                Illicit Content
+            </option>
+
+            <option value="Suspected AI-Generated Content">
+                Suspected AI-Generated Content
+            </option>
+
+            <option value="Impersonation">
+                Impersonation
+            </option>
+
+            <option value="Harassment / Cyberbullying">
+                Harassment / Cyberbullying
+            </option>
+
+            <option value="Scam / Fraud">
+                Scam / Fraud
+            </option>
+
+            <option value="False or Misleading Content">
+                False or Misleading Content
+            </option>
+
+            <option value="Threatening / Abusive Content">
+                Threatening / Abusive Content
+            </option>
+
+            <option value="Other Harmful Content">
+                Other Harmful Content
+            </option>
+        </select>
+    </div>
+
+</div>
+
+                <option value="">
+                    All Collection Periods
+                </option>
+
+                <option value="Table 1 (JAN - FEB)">
+                    January - February
+                </option>
+
+                <option value="Table 2 (MAR - APR)">
+                    March - April
+                </option>
+
+                <option value="Table 3 (MAY - JUN)">
+                    May - June
+                </option>
+
+                <option value="Table 4 (JUL - AUG)">
+                    July - August
+                </option>
+
+                <option value="Table 5 (SEP - OCT)">
+                    September - October
+                </option>
+
+            </select>
+
+
+            <select id="categoryFilter">
+
+                <option value="">
+                    All Categories
+                </option>
+
+                <option value="Malicious Content">
+                    Malicious Content
+                </option>
+
+                <option value="Pornographic Content">
+                    Pornographic Content
+                </option>
+
+                <option value="Illicit Content">
+                    Illicit Content
+                </option>
+
+                <option value="Suspected AI-Generated Content">
+                    Suspected AI-Generated Content
+                </option>
+
+                <option value="Impersonation">
+                    Impersonation
+                </option>
+
+                <option value="Harassment / Cyberbullying">
+                    Harassment / Cyberbullying
+                </option>
+
+                <option value="Scam / Fraud">
+                    Scam / Fraud
+                </option>
+
+                <option value="False or Misleading Content">
+                    False or Misleading Content
+                </option>
+
+                <option value="Threatening / Abusive Content">
+                    Threatening / Abusive Content
+                </option>
+
+                <option value="Other Harmful Content">
+                    Other Harmful Content
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- RECORDS TABLE -->
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Post ID</th>
+                        <th>Period</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Collected By</th>
+                        <th>Date Collected</th>
+                        <th>Source</th>
+                    </tr>
+                </thead>
+
+                <tbody id="recordsTable">
+
+                    <tr>
+                        <td colspan="7">
+                            Loading records...
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div id="recordsMessage"></div>
+
+    </section>
+
+</main>
+
+<script src="records.js"></script>
+
+</body>
+</html>

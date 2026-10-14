@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CAMIS | Research Collection</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<nav class="navigation">
+
+    <a href="index.html" class="active">
+        Data Collection
+    </a>
+
+    <a href="records.html">
+        Research Records
+    </a>
+
+<a href="analytics.html">
+    Analytics
+</a>
+
+</nav>
+
+<body>
+
+    <header>
+        <div>
+            <h1>CAMIS</h1>
+            <p>Consumer Affairs Monitoring & Intelligence System</p>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="form-card">
+
+            <h2>Social Media Research Collection</h2>
+
+            <p class="subtitle">
+                Submit publicly available social media content for research and review.
+            </p>
+
+           <form id="researchForm">
+
+    <label for="collectionPeriod">Collection Period *</label>
+    <select id="collectionPeriod" required>
+        <option value="">Select period</option>
+        <option value="Table 1 (JAN - FEB)">January - February 2026</option>
+        <option value="Table 2 (MAR - APR)">March - April 2026</option>
+        <option value="Table 3 (MAY - JUN)">May - June 2026</option>
+        <option value="Table 4 (JUL - AUG)">July - August 2026</option>
+        <option value="Table 5 (SEP - OCT)">September - October 2026</option>
+    </select>
+
+    <label for="platform">Platform *</label>
+    <select id="platform" required>
+        <option value="">Select platform</option>
+        <option value="Facebook">Facebook</option>
+        <option value="Instagram">Instagram</option>
+        <option value="TikTok">TikTok</option>
+        <option value="X">X</option>
+        <option value="YouTube">YouTube</option>
+        <option value="Other">Other</option>
+    </select>
+
+    <label for="originalPostDate">Original Post Date *</label>
+    <input type="date" id="originalPostDate" required>
+
+    <label for="postUrl">Post URL *</label>
+    <input
+        type="url"
+        id="postUrl"
+        placeholder="https://..."
+        required
+    >
+
+    <label for="accountPageName">Account / Page Name</label>
+    <input
+        type="text"
+        id="accountPageName"
+        placeholder="Publicly displayed account or page name"
+    >
+
+    <label for="username">Username / Handle</label>
+    <input
+        type="text"
+        id="username"
+        placeholder="@username"
+    >
+
+    <label for="followerCount">Follower Count</label>
+    <input
+        type="number"
+        id="followerCount"
+        min="0"
+        placeholder="If publicly available"
+    >
+
+    <div class="engagement-grid">
+
+        <div>
+            <label for="reactionCount">Reactions</label>
+            <input type="number" id="reactionCount" min="0">
+        </div>
+
+        <div>
+            <label for="commentCount">Comments</label>
+            <input type="number" id="commentCount" min="0">
+        </div>
+
+        <div>
+            <label for="shareCount">Shares</label>
+            <input type="number" id="shareCount" min="0">
+        </div>
+
+    </div>
+
+    <label for="publicContactNumber">
+        Publicly Displayed Contact Number
+    </label>
+    <input
+        type="text"
+        id="publicContactNumber"
+        placeholder="Only if publicly displayed"
+    >
+
+    <label for="briefDescription">Brief Description *</label>
+    <textarea
+        id="briefDescription"
+        rows="5"
+        placeholder="Briefly describe the observed content and why it is relevant..."
+        required
+    ></textarea>
+
+    <label for="identifiedCategory">Identified Category *</label>
+    <select id="identifiedCategory" required>
+        <option value="">Select category</option>
+        <option value="Malicious Content">Malicious Content</option>
+        <option value="Pornographic Content">Pornographic Content</option>
+        <option value="Illicit Content">Illicit Content</option>
+        <option value="Suspected AI-Generated Content">Suspected AI-Generated Content</option>
+        <option value="Impersonation">Impersonation</option>
+        <option value="Harassment / Cyberbullying">Harassment / Cyberbullying</option>
+        <option value="Scam / Fraud">Scam / Fraud</option>
+        <option value="False or Misleading Content">False or Misleading Content</option>
+        <option value="Threatening / Abusive Content">Threatening / Abusive Content</option>
+        <option value="Other Harmful Content">Other Harmful Content</option>
+    </select>
+
+    <div class="checkbox-field">
+        <input type="checkbox" id="suspectedAiGenerated">
+
+        <label for="suspectedAiGenerated">
+            Suspected AI-generated content
+        </label>
+    </div>
+
+    <label for="collectedBy">Collected By *</label>
+    <input
+        type="text"
+        id="collectedBy"
+        placeholder="Researcher name"
+        required
+    >
+
+    <button type="submit" id="submitButton">
+        Submit Record
+    </button>
+
+</form>
+
+            <div id="message"></div>
+
+        </section>
+
+    </main>
+
+    <script src="app.js"></script>
+
+</body>
+</html>
