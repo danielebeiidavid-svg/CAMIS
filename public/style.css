@@ -554,3 +554,33 @@ tbody tr:hover {
         flex-wrap: wrap;
     }
 }
+
+.queue-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.remove-button {
+    border: 1px solid #dc2626;
+    background: #ffffff;
+    color: #b91c1c;
+
+    padding: 8px 13px;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.remove-button:hover {
+    background: #fef2f2;
+}
+
+.queue-type {
+    font-size: 22px !important;
+}
