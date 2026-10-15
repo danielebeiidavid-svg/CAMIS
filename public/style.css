@@ -1,3 +1,7 @@
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
 * {
     box-sizing: border-box;
 }
@@ -9,7 +13,10 @@ body {
     color: #1f2937;
 }
 
-/* HEADER */
+
+/* =========================================================
+   STANDARD HEADER
+   ========================================================= */
 
 header {
     background: #172554;
@@ -29,13 +36,19 @@ header p {
     opacity: 0.9;
 }
 
-/* MAIN AREA */
+
+/* =========================================================
+   MAIN AREA
+   ========================================================= */
 
 main {
     padding: 40px 20px;
 }
 
-/* FORM CARD */
+
+/* =========================================================
+   FORM CARD
+   ========================================================= */
 
 .form-card {
     max-width: 720px;
@@ -59,7 +72,10 @@ main {
     font-size: 14px;
 }
 
-/* FORM */
+
+/* =========================================================
+   FORMS
+   ========================================================= */
 
 form {
     display: flex;
@@ -95,7 +111,10 @@ textarea:focus {
     border-color: #2563eb;
 }
 
-/* BUTTON */
+
+/* =========================================================
+   STANDARD FORM BUTTON
+   ========================================================= */
 
 button {
     margin-top: 26px;
@@ -118,7 +137,10 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* MESSAGES */
+
+/* =========================================================
+   MESSAGES
+   ========================================================= */
 
 #message {
     margin-top: 20px;
@@ -140,26 +162,10 @@ button:disabled {
     color: #991b1b;
 }
 
-/* MOBILE */
 
-@media (max-width: 600px) {
-
-    header {
-        padding: 20px;
-    }
-
-    main {
-        padding: 20px 12px;
-    }
-
-    .form-card {
-        padding: 22px;
-    }
-}
-
-/* ==================================================
-   CAMIS NAVIGATION
-   ================================================== */
+/* =========================================================
+   CAMIS OLD NAVIGATION
+   ========================================================= */
 
 .navigation {
     background: white;
@@ -189,9 +195,9 @@ button:disabled {
 }
 
 
-/* ==================================================
+/* =========================================================
    RESEARCH RECORDS
-   ================================================== */
+   ========================================================= */
 
 .records-main {
     padding: 35px 4%;
@@ -224,7 +230,9 @@ button:disabled {
 }
 
 
-/* FILTERS */
+/* =========================================================
+   FILTERS
+   ========================================================= */
 
 .filters {
     display: grid;
@@ -233,8 +241,22 @@ button:disabled {
     margin: 20px 0;
 }
 
+.filter-field {
+    display: flex;
+    flex-direction: column;
+}
 
-/* TABLE */
+.filter-field label {
+    margin: 0 0 6px;
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   TABLES
+   ========================================================= */
 
 .table-container {
     width: 100%;
@@ -272,7 +294,9 @@ tbody tr:hover {
 }
 
 
-/* CATEGORY */
+/* =========================================================
+   CATEGORY
+   ========================================================= */
 
 .category-badge {
     display: inline-block;
@@ -284,12 +308,15 @@ tbody tr:hover {
 }
 
 
-/* SOURCE */
+/* =========================================================
+   SOURCE LINKS
+   ========================================================= */
 
 .source-link {
     text-decoration: none;
     font-weight: 600;
     color: #1d4ed8;
+    white-space: nowrap;
 }
 
 .source-link:hover {
@@ -297,35 +324,9 @@ tbody tr:hover {
 }
 
 
-/* MOBILE */
-
-@media (max-width: 800px) {
-
-    .navigation {
-        padding: 0 10px;
-        overflow-x: auto;
-    }
-
-    .navigation a {
-        white-space: nowrap;
-    }
-
-    .records-heading {
-        flex-direction: column;
-    }
-
-    .filters {
-        grid-template-columns: 1fr;
-    }
-
-    .records-main {
-        padding: 20px 10px;
-    }
-}
-
-/* ==================================================
+/* =========================================================
    CAMIS ANALYTICS
-   ================================================== */
+   ========================================================= */
 
 .analytics-main {
     padding: 35px 6%;
@@ -343,7 +344,9 @@ tbody tr:hover {
 }
 
 
-/* SUMMARY CARDS */
+/* =========================================================
+   ANALYTICS SUMMARY
+   ========================================================= */
 
 .summary-grid {
     display: grid;
@@ -373,7 +376,9 @@ tbody tr:hover {
 }
 
 
-/* CHART CARDS */
+/* =========================================================
+   CHART CARDS
+   ========================================================= */
 
 .chart-card {
     background: white;
@@ -400,52 +405,14 @@ tbody tr:hover {
     margin-top: 20px;
 }
 
-
-/* ANALYTICS TABLE */
-
 .analytics-table {
     min-width: 650px;
 }
 
 
-/* RESPONSIVE */
-
-@media (max-width: 1000px) {
-
-    .summary-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-}
-
-@media (max-width: 600px) {
-
-    .analytics-main {
-        padding: 20px 10px;
-    }
-
-    .summary-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .chart-container {
-        height: 420px;
-    }
-
-}
-
-.filter-field {
-    display: flex;
-    flex-direction: column;
-}
-
-.filter-field label {
-    margin: 0 0 6px;
-    font-size: 12px;
-    color: #6b7280;
-    font-weight: 600;
-}
+/* =========================================================
+   ENGAGEMENT FIELDS
+   ========================================================= */
 
 .engagement-grid {
     display: grid;
@@ -475,18 +442,17 @@ tbody tr:hover {
     font-weight: 600;
 }
 
-@media (max-width: 600px) {
-    .engagement-grid {
-        grid-template-columns: 1fr;
-    }
-}
 
 /* =========================================================
-   CAMIS HEADER
+   CAMIS MAIN HEADER
    ========================================================= */
 
 .site-header {
     background: #1e3164;
+
+    /* Override global header padding */
+    padding: 0;
+
     width: 100%;
 }
 
@@ -521,7 +487,6 @@ tbody tr:hover {
     text-decoration: none;
     font-size: 15px;
     font-weight: 500;
-
     padding: 10px 14px;
     border-radius: 6px;
 
@@ -541,7 +506,152 @@ tbody tr:hover {
     font-weight: 600;
 }
 
+
+/* =========================================================
+   AUTOMATED REVIEW QUEUE
+   ========================================================= */
+
+.queue-type {
+    font-size: 22px !important;
+}
+
+
+/* =========================================================
+   QUEUE ACTION COLUMN
+   ========================================================= */
+
+.review-table th:last-child,
+.review-table td:last-child {
+    min-width: 260px;
+    width: 260px;
+    vertical-align: middle;
+}
+
+
+/* =========================================================
+   QUEUE ACTION BUTTON CONTAINER
+   ========================================================= */
+
+.queue-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 10px;
+
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   ADD TO FORM + REMOVE
+   IMPORTANT:
+   These rules override the global button styles above.
+   ========================================================= */
+
+.queue-actions .review-button,
+.queue-actions .remove-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 44px;
+    min-height: 44px;
+
+    margin: 0;
+
+    padding: 0 15px;
+
+    border-radius: 6px;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+
+    box-sizing: border-box;
+
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+
+/* ADD TO FORM */
+
+.queue-actions .review-button {
+    background: #172554;
+    color: #ffffff;
+
+    border: 1px solid #172554;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.queue-actions .review-button:hover {
+    background: #1e3a8a;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+
+/* REMOVE */
+
+.queue-actions .remove-button {
+    background: #ffffff;
+    color: #b91c1c;
+
+    border: 1px solid #dc2626;
+
+    /* Critical override of global button rule */
+    margin-top: 0;
+
+    cursor: pointer;
+}
+
+.queue-actions .remove-button:hover {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
 @media (max-width: 800px) {
+
+    .navigation {
+        padding: 0 10px;
+        overflow-x: auto;
+    }
+
+    .navigation a {
+        white-space: nowrap;
+    }
+
+    .records-heading {
+        flex-direction: column;
+    }
+
+    .filters {
+        grid-template-columns: 1fr;
+    }
+
+    .records-main {
+        padding: 20px 10px;
+    }
 
     .nav-container {
         padding: 16px 20px;
@@ -555,43 +665,39 @@ tbody tr:hover {
     }
 }
 
-.queue-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: nowrap;
-    white-space: nowrap;
-}
 
-.review-button,
-.remove-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 46px;
-    box-sizing: border-box;
-    white-space: nowrap;
-}
+@media (max-width: 600px) {
 
-.remove-button {
-    border: 1px solid #dc2626;
-    background: #ffffff;
-    color: #b91c1c;
+    header {
+        padding: 20px;
+    }
 
-    padding: 8px 13px;
+    /* Keep CAMIS navigation header correct */
+    .site-header {
+        padding: 0;
+    }
 
-    border-radius: 6px;
+    main {
+        padding: 20px 12px;
+    }
 
-    font-size: 14px;
-    font-weight: 600;
+    .form-card {
+        padding: 22px;
+    }
 
-    cursor: pointer;
-}
+    .analytics-main {
+        padding: 20px 10px;
+    }
 
-.remove-button:hover {
-    background: #fef2f2;
-}
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
 
-.queue-type {
-    font-size: 22px !important;
+    .chart-container {
+        height: 420px;
+    }
+
+    .engagement-grid {
+        grid-template-columns: 1fr;
+    }
 }
