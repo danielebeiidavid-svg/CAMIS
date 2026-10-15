@@ -558,8 +558,19 @@ tbody tr:hover {
 .queue-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    gap: 10px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+.review-button,
+.remove-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 46px;
+    box-sizing: border-box;
+    white-space: nowrap;
 }
 
 .remove-button {
