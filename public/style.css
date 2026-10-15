@@ -551,30 +551,40 @@ tbody tr:hover {
    These rules override the global button styles above.
    ========================================================= */
 
+/* =========================================================
+   AUTOMATED REVIEW ACTION BUTTONS
+   ========================================================= */
+
+.queue-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
 .queue-actions .review-button,
 .queue-actions .remove-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    height: 44px;
-    min-height: 44px;
+    height: 34px;
+    min-height: 34px;
 
     margin: 0;
+    padding: 0 11px;
 
-    padding: 0 15px;
-
-    border-radius: 6px;
+    border-radius: 5px;
 
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     line-height: 1;
 
-    box-sizing: border-box;
-
     white-space: nowrap;
-    vertical-align: middle;
+    box-sizing: border-box;
 }
 
 
@@ -583,11 +593,8 @@ tbody tr:hover {
 .queue-actions .review-button {
     background: #172554;
     color: #ffffff;
-
     border: 1px solid #172554;
-
     text-decoration: none;
-
     cursor: pointer;
 }
 
@@ -597,6 +604,33 @@ tbody tr:hover {
     text-decoration: none;
 }
 
+
+/* REMOVE */
+
+.queue-actions .remove-button {
+    background: #ffffff;
+    color: #b91c1c;
+    border: 1px solid #dc2626;
+
+    margin: 0;
+
+    cursor: pointer;
+}
+
+.queue-actions .remove-button:hover {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+
+/* QUEUE ACTION COLUMN */
+
+.review-table th:last-child,
+.review-table td:last-child {
+    min-width: 215px;
+    width: 215px;
+    vertical-align: middle;
+}
 
 /* REMOVE */
 
