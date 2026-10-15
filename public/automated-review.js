@@ -4,43 +4,30 @@ let automatedFindings = [];
 document.addEventListener(
     "DOMContentLoaded",
     () => {
-
         loadAutomatedFindings();
-
-        document
-            .getElementById("statusFilter")
-            .addEventListener(
-                "change",
-                renderFindings
-            );
     }
 );
 
 
+// ============================================================
+// LOAD AUTOMATED FINDINGS
+// ============================================================
+
 async function loadAutomatedFindings() {
 
     const container =
-        document.getElementById(
-            "reviewContent"
-        );
-
+        document.getElementById("reviewContent");
 
     try {
 
         const response =
-            await fetch(
-                "/api/automated-review"
-            );
-
+            await fetch("/api/automated-review");
 
         const result =
             await response.json();
 
 
-        if (
-            !response.ok ||
-            !result.success
-        ) {
+        if (!response.ok || !result.success) {
 
             throw new Error(
                 result.error ||
@@ -62,10 +49,8 @@ async function loadAutomatedFindings() {
 
         console.error(error);
 
-
         container.className =
             "error-message";
-
 
         container.textContent =
             "Unable to load automated review findings.";
@@ -73,29 +58,14 @@ async function loadAutomatedFindings() {
 }
 
 
+// ============================================================
+// UPDATE SUMMARY CARDS
+// ============================================================
+
 function updateSummary() {
 
     const total =
         automatedFindings.length;
-
-
-    const pending =
-        automatedFindings.filter(
-            record =>
-                record["Review Status"] ===
-                "Pending"
-        ).length;
-
-
-    const reviewed =
-        automatedFindings.filter(
-            record =>
-                record["Review Status"] ===
-                    "Verified" ||
-
-                record["Review Status"] ===
-                    "Rejected"
-        ).length;
 
 
     document.getElementById(
@@ -103,16 +73,33 @@ function updateSummary() {
     ).textContent = total;
 
 
-    document.getElementById(
-        "pendingFindings"
-    ).textContent = pending;
+    // Because this table is now purely a temporary queue,
+    // every record displayed is waiting for officer action.
+
+    const pendingElement =
+        document.getElementById(
+            "pendingFindings"
+        );
+
+    if (pendingElement) {
+        pendingElement.textContent = total;
+    }
 
 
-    document.getElementById(
-        "reviewedFindings"
-    ).textContent = reviewed;
+    const reviewedElement =
+        document.getElementById(
+            "reviewedFindings"
+        );
+
+    if (reviewedElement) {
+        reviewedElement.textContent = "—";
+    }
 }
 
+
+// ============================================================
+// DISPLAY FINDINGS
+// ============================================================
 
 function renderFindings() {
 
@@ -122,37 +109,13 @@ function renderFindings() {
         );
 
 
-    const selectedStatus =
-        document.getElementById(
-            "statusFilter"
-        ).value;
-
-
-    let records =
-        automatedFindings;
-
-
-    if (
-        selectedStatus !== "All"
-    ) {
-
-        records =
-            records.filter(
-                record =>
-                    record["Review Status"] ===
-                    selectedStatus
-            );
-    }
-
-
-    if (records.length === 0) {
+    if (automatedFindings.length === 0) {
 
         container.className =
             "empty-message";
 
-
         container.innerHTML =
-            "No automated findings match this filter.";
+            "There are currently no automated findings waiting for officer action.";
 
         return;
     }
@@ -163,134 +126,126 @@ function renderFindings() {
 
 
     const rows =
-        records
-            .map(
-                record => {
+        automatedFindings
+            .map(record => {
 
-                    const queueId =
-                        record["Queue ID"];
-
-
-                    const platform =
-                        escapeHTML(
-                            record["Platform"] ||
-                            "Facebook"
-                        );
+                const queueId =
+                    record["Queue ID"];
 
 
-                    const category =
-                        escapeHTML(
-                            record[
-                                "Potential Category"
-                            ] || ""
-                        );
+                const platform =
+                    escapeHTML(
+                        record["Platform"] ||
+                        "Facebook"
+                    );
 
 
-                    const indicators =
-                        escapeHTML(
-                            record[
-                                "Matched Indicators"
-                            ] || ""
-                        );
-
-
-                    const query =
-                        escapeHTML(
-                            record[
-                                "Discovery Query"
-                            ] || ""
-                        );
-
-
-                    const status =
+                const category =
+                    escapeHTML(
                         record[
-                            "Review Status"
-                        ] || "Pending";
+                            "Potential Category"
+                        ] || ""
+                    );
 
 
-                    const sourceURL =
-                        safeURL(
-                            record["Post URL"]
-                        );
+                const indicators =
+                    escapeHTML(
+                        record[
+                            "Matched Indicators"
+                        ] || ""
+                    );
 
 
-                    const discovered =
-                        formatDate(
-                            record[
-                                "Date Discovered"
-                            ]
-                        );
+                const query =
+                    escapeHTML(
+                        record[
+                            "Discovery Query"
+                        ] || ""
+                    );
 
 
-                    return `
-                        <tr>
+                const sourceURL =
+                    safeURL(
+                        record["Post URL"]
+                    );
 
-                            <td>
-                                ${queueId}
-                            </td>
 
-                            <td>
-                                ${discovered}
-                            </td>
+                const discovered =
+                    formatDate(
+                        record[
+                            "Date Discovered"
+                        ]
+                    );
 
-                            <td>
-                                ${platform}
-                            </td>
 
-                            <td>
-                                ${category}
-                            </td>
+                return `
+                    <tr id="queue-row-${queueId}">
 
-                            <td>
-                                ${indicators}
-                            </td>
+                        <td>
+                            ${queueId}
+                        </td>
 
-                            <td>
-                                ${query}
-                            </td>
+                        <td>
+                            ${discovered}
+                        </td>
 
-                            <td>
-                                ${statusBadge(
-                                    status
-                                )}
-                            </td>
+                        <td>
+                            ${platform}
+                        </td>
 
-                            <td>
-                                ${
-                                    sourceURL
-                                        ? `
-                                            <a
-                                                class="source-link"
-                                                href="${sourceURL}"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                            >
-                                                View Post
-                                            </a>
-                                          `
-                                        : "Unavailable"
-                                }
-                            </td>
+                        <td>
+                            ${category}
+                        </td>
 
-                            <td>
-                                ${
-                                    status === "Pending"
-                                        ? `
-                                            <a
-                                                class="review-button"
-                                                href="review-finding.html?id=${encodeURIComponent(queueId)}"
-                                            >
-                                                Review
-                                            </a>
-                                          `
-                                        : "Completed"
-                                }
-                            </td>
+                        <td>
+                            ${indicators || "—"}
+                        </td>
 
-                        </tr>
-                    `;
-                }
-            )
+                        <td>
+                            ${query || "—"}
+                        </td>
+
+                        <td>
+                            ${
+                                sourceURL
+                                    ? `
+                                        <a
+                                            class="source-link"
+                                            href="${sourceURL}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            View Post
+                                        </a>
+                                      `
+                                    : "Unavailable"
+                            }
+                        </td>
+
+                        <td>
+                            <div class="queue-actions">
+
+                                <a
+                                    class="review-button"
+                                    href="review-finding.html?id=${encodeURIComponent(queueId)}"
+                                >
+                                    Add to Form
+                                </a>
+
+                                <button
+                                    type="button"
+                                    class="remove-button"
+                                    onclick="removeQueueFinding(${queueId})"
+                                >
+                                    Remove
+                                </button>
+
+                            </div>
+                        </td>
+
+                    </tr>
+                `;
+            })
             .join("");
 
 
@@ -307,9 +262,8 @@ function renderFindings() {
                     <th>Potential Category</th>
                     <th>Indicators</th>
                     <th>Discovery Query</th>
-                    <th>Status</th>
                     <th>Source</th>
-                    <th>Action</th>
+                    <th>Queue Action</th>
                 </tr>
 
             </thead>
@@ -323,37 +277,78 @@ function renderFindings() {
 }
 
 
-function statusBadge(status) {
+// ============================================================
+// REMOVE TEMPORARY FINDING
+// ============================================================
 
-    const safeStatus =
-        escapeHTML(status);
+async function removeQueueFinding(queueId) {
+
+    const confirmed =
+        window.confirm(
+            "Permanently remove this automated finding from the temporary CAMIS review queue?\n\n" +
+            "This does not remove the Facebook post and does not delete any permanent verified record."
+        );
 
 
-    let className =
-        "status-badge";
-
-
-    if (status === "Verified") {
-
-        className +=
-            " status-verified";
+    if (!confirmed) {
+        return;
     }
 
 
-    if (status === "Rejected") {
+    try {
 
-        className +=
-            " status-rejected";
+        const response =
+            await fetch(
+                `/api/automated-review/${encodeURIComponent(queueId)}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok || !result.success) {
+
+            throw new Error(
+                result.error ||
+                "Unable to remove finding."
+            );
+        }
+
+
+        // Remove from local array.
+        automatedFindings =
+            automatedFindings.filter(
+                record =>
+                    Number(
+                        record["Queue ID"]
+                    ) !== Number(queueId)
+            );
+
+
+        updateSummary();
+
+        renderFindings();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            error.message ||
+            "Unable to remove the automated finding."
+        );
     }
-
-
-    return `
-        <span class="${className}">
-            ${safeStatus}
-        </span>
-    `;
 }
 
+
+// ============================================================
+// DATE DISPLAY
+// ============================================================
 
 function formatDate(value) {
 
@@ -371,7 +366,6 @@ function formatDate(value) {
             date.getTime()
         )
     ) {
-
         return "—";
     }
 
@@ -388,6 +382,10 @@ function formatDate(value) {
     );
 }
 
+
+// ============================================================
+// SAFE FACEBOOK URL
+// ============================================================
 
 function safeURL(value) {
 
@@ -406,19 +404,14 @@ function safeURL(value) {
             url.protocol !== "https:" &&
             url.protocol !== "http:"
         ) {
-
             return null;
         }
 
 
         if (
-            url.hostname !==
-                "facebook.com" &&
-
-            url.hostname !==
-                "www.facebook.com"
+            url.hostname !== "facebook.com" &&
+            url.hostname !== "www.facebook.com"
         ) {
-
             return null;
         }
 
@@ -433,27 +426,16 @@ function safeURL(value) {
 }
 
 
+// ============================================================
+// HTML ESCAPING
+// ============================================================
+
 function escapeHTML(value) {
 
     return String(value ?? "")
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
