@@ -419,6 +419,132 @@ app.get("/api/automated-review", async (req, res) => {
     }
 });
 
+// ============================================================
+// DELETE TEMPORARY AUTOMATED FINDING
+// ============================================================
+
+app.delete(
+    "/api/automated-review/:id",
+    async (req, res) => {
+
+        try {
+
+            const queueId =
+                Number(req.params.id);
+
+
+            if (
+                !Number.isInteger(queueId) ||
+                queueId <= 0
+            ) {
+
+                return res.status(400).json({
+                    success: false,
+                    error: "Invalid queue ID."
+                });
+            }
+
+
+            // Confirm that the record exists first.
+            const {
+                data: existingRecord,
+                error: lookupError
+            } =
+                await supabase
+                    .from(
+                        "automated_review_queue"
+                    )
+                    .select(
+                        '"Queue ID", "Post URL"'
+                    )
+                    .eq(
+                        "Queue ID",
+                        queueId
+                    )
+                    .maybeSingle();
+
+
+            if (lookupError) {
+
+                console.error(
+                    "Queue lookup error:",
+                    lookupError
+                );
+
+
+                return res.status(500).json({
+                    success: false,
+                    error:
+                        "Unable to check automated finding."
+                });
+            }
+
+
+            if (!existingRecord) {
+
+                return res.status(404).json({
+                    success: false,
+                    error:
+                        "Automated finding was not found."
+                });
+            }
+
+
+            // Permanently delete from temporary queue.
+            const {
+                error: deleteError
+            } =
+                await supabase
+                    .from(
+                        "automated_review_queue"
+                    )
+                    .delete()
+                    .eq(
+                        "Queue ID",
+                        queueId
+                    );
+
+
+            if (deleteError) {
+
+                console.error(
+                    "Queue delete error:",
+                    deleteError
+                );
+
+
+                return res.status(500).json({
+                    success: false,
+                    error:
+                        "Unable to remove automated finding."
+                });
+            }
+
+
+            return res.json({
+                success: true,
+                message:
+                    "Automated finding permanently removed from temporary review queue."
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "DELETE /api/automated-review/:id error:",
+                error
+            );
+
+
+            return res.status(500).json({
+                success: false,
+                error:
+                    "Internal server error."
+            });
+        }
+    }
+);
+
 // --------------------------------------------------
 // Start server
 // --------------------------------------------------
