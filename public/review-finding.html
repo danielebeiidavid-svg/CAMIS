@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Add Verified Finding | CAMIS</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <style>
+
+        .verification-main {
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .verification-heading {
+            margin-bottom: 25px;
+        }
+
+        .verification-heading h1 {
+            margin: 0 0 8px;
+            color: #172554;
+        }
+
+        .verification-heading p {
+            margin: 0;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .finding-context {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 22px;
+            margin-bottom: 24px;
+        }
+
+        .finding-context h2 {
+            margin: 0 0 18px;
+            color: #172554;
+            font-size: 19px;
+        }
+
+        .context-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+            gap: 18px 28px;
+        }
+
+        .context-item {
+            min-width: 0;
+        }
+
+        .context-label {
+            display: block;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .context-value {
+            color: #1f2937;
+            overflow-wrap: anywhere;
+        }
+
+        .source-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-top: 18px;
+
+            padding: 9px 14px;
+
+            border-radius: 6px;
+
+            background: #1d4ed8;
+            color: white;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            text-decoration: none;
+        }
+
+        .source-button:hover {
+            background: #1e40af;
+        }
+
+        .verification-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 28px;
+        }
+
+        .verification-card h2 {
+            margin: 0;
+            color: #172554;
+        }
+
+        .verification-card .form-description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 7px 0 5px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+            gap: 0 20px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .field-help {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .ai-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .ai-checkbox input {
+            width: auto;
+            margin: 0;
+        }
+
+        .ai-checkbox label {
+            margin: 0;
+        }
+
+        .form-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .form-actions button {
+            margin: 0;
+        }
+
+        .cancel-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 13px 18px;
+
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+
+            background: white;
+            color: #334155;
+
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .save-button {
+            padding: 13px 18px;
+        }
+
+        .verification-message {
+            display: none;
+
+            margin-top: 20px;
+            padding: 13px 15px;
+
+            border-radius: 6px;
+
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .verification-message.success {
+            display: block;
+            background: #ecfdf5;
+            color: #166534;
+        }
+
+        .verification-message.error {
+            display: block;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .loading-box {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 35px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        @media (max-width: 700px) {
+
+            .context-grid,
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: auto;
+            }
+
+            .form-actions {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .form-actions button,
+            .cancel-button {
+                width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="site-header">
+
+    <div class="nav-container">
+
+        <a
+            href="index.html"
+            class="brand"
+        >
+            CAMIS
+        </a>
+
+
+        <nav class="main-nav">
+
+            <a href="index.html">
+                Dashboard
+            </a>
+
+            <a
+                href="automated-review.html"
+                class="active"
+            >
+                Automated Review
+            </a>
+
+            <a href="records.html">
+                Records
+            </a>
+
+            <a href="analytics.html">
+                Analytics
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="verification-main">
+
+
+    <section class="verification-heading">
+
+        <h1>
+            Add Verified Finding
+        </h1>
+
+        <p>
+            Complete this form only after reviewing the original
+            source post. Information saved here becomes part of
+            the permanent CAMIS research records.
+        </p>
+
+    </section>
+
+
+    <div
+        id="pageLoading"
+        class="loading-box"
+    >
+        Loading automated finding...
+    </div>
+
+
+    <div
+        id="verificationContent"
+        hidden
+    >
+
+
+        <section class="finding-context">
+
+            <h2>
+                Automated Finding
+            </h2>
+
+
+            <div class="context-grid">
+
+
+                <div class="context-item">
+
+                    <span class="context-label">
+                        Queue ID
+                    </span>
+
+                    <span
+                        class="context-value"
+                        id="queueIdDisplay"
+                    >
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="context-item">
+
+                    <span class="context-label">
+                        Platform
+                    </span>
+
+                    <span
+                        class="context-value"
+                        id="platformDisplay"
+                    >
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="context-item">
+
+                    <span class="context-label">
+                        Potential Category
+                    </span>
+
+                    <span
+                        class="context-value"
+                        id="potentialCategoryDisplay"
+                    >
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="context-item">
+
+                    <span class="context-label">
+                        Matched Indicators
+                    </span>
+
+                    <span
+                        class="context-value"
+                        id="indicatorsDisplay"
+                    >
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="context-item">
+
+                    <span class="context-label">
+                        Discovery Query
+                    </span>
+
+                    <span
+                        class="context-value"
+                        id="queryDisplay"
+                    >
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="context-item">
+
+                    <span class="context-label">
+                        Date Discovered
+                    </span>
+
+                    <span
+                        class="context-value"
+                        id="dateDiscoveredDisplay"
+                    >
+                        -
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <a
+                id="sourcePostLink"
+                class="source-button"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Open Original Post
+            </a>
+
+        </section>
+
+
+
+        <section class="verification-card">
+
+            <h2>
+                Officer-Verified Information
+            </h2>
+
+            <p class="form-description">
+                Enter only information that can be verified from
+                the reviewed public source. CAMIS will automatically
+                determine the correct permanent table from the
+                Original Post Date.
+            </p>
+
+
+            <form id="verificationForm">
+
+
+                <div class="form-grid">
+
+
+                    <div>
+
+                        <label for="originalPostDate">
+                            Original Post Date *
+                        </label>
+
+                        <input
+                            type="date"
+                            id="originalPostDate"
+                            required
+                            min="2026-01-01"
+                            max="2026-10-31"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="identifiedCategory">
+                            Verified Category *
+                        </label>
+
+                        <select
+                            id="identifiedCategory"
+                            required
+                        >
+
+                            <option value="">
+                                Select verified category
+                            </option>
+
+                            <option value="Malicious Content">
+                                Malicious Content
+                            </option>
+
+                            <option value="Pornographic Content">
+                                Pornographic Content
+                            </option>
+
+                            <option value="Illicit Content">
+                                Illicit Content
+                            </option>
+
+                            <option value="Suspected AI-Generated Content">
+                                Suspected AI-Generated Content
+                            </option>
+
+                            <option value="Impersonation">
+                                Impersonation
+                            </option>
+
+                            <option value="Harassment / Cyberbullying">
+                                Harassment / Cyberbullying
+                            </option>
+
+                            <option value="Scam / Fraud">
+                                Scam / Fraud
+                            </option>
+
+                            <option value="False or Misleading Content">
+                                False or Misleading Content
+                            </option>
+
+                            <option value="Threatening / Abusive Content">
+                                Threatening / Abusive Content
+                            </option>
+
+                            <option value="Other Harmful Content">
+                                Other Harmful Content
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="accountPageName">
+                            Account / Page Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="accountPageName"
+                            maxlength="250"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="username">
+                            Username
+                        </label>
+
+                        <input
+                            type="text"
+                            id="username"
+                            maxlength="250"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="followerCount">
+                            Follower Count
+                        </label>
+
+                        <input
+                            type="number"
+                            id="followerCount"
+                            min="0"
+                            step="1"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="publicContactNumber">
+                            Public Contact Number
+                        </label>
+
+                        <input
+                            type="text"
+                            id="publicContactNumber"
+                            maxlength="100"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="reactionCount">
+                            Reaction Count
+                        </label>
+
+                        <input
+                            type="number"
+                            id="reactionCount"
+                            min="0"
+                            step="1"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="commentCount">
+                            Comment Count
+                        </label>
+
+                        <input
+                            type="number"
+                            id="commentCount"
+                            min="0"
+                            step="1"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="shareCount">
+                            Share Count
+                        </label>
+
+                        <input
+                            type="number"
+                            id="shareCount"
+                            min="0"
+                            step="1"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="collectedBy">
+                            Collected By *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="collectedBy"
+                            required
+                            maxlength="250"
+                        >
+
+                    </div>
+
+
+                    <div class="full-width">
+
+                        <label for="briefDescription">
+                            Brief Description *
+                        </label>
+
+                        <textarea
+                            id="briefDescription"
+                            required
+                            maxlength="2000"
+                            placeholder="Enter a concise officer-verified description of the reviewed post."
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="full-width ai-checkbox">
+
+                        <input
+                            type="checkbox"
+                            id="suspectedAiGenerated"
+                        >
+
+                        <label for="suspectedAiGenerated">
+                            Suspected AI-generated content
+                        </label>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        id="saveButton"
+                        class="save-button"
+                    >
+                        Save Permanent Record
+                    </button>
+
+
+                    <a
+                        href="automated-review.html"
+                        class="cancel-button"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+
+                <div
+                    id="formMessage"
+                    class="verification-message"
+                ></div>
+
+
+            </form>
+
+
+        </section>
+
+
+    </div>
+
+
+</main>
+
+
+<script src="review-finding.js"></script>
+
+
+</body>
+
+</html>
