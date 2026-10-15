@@ -1,5 +1,7 @@
 let automatedFindings = [];
 
+const CAMIS_LOCAL_SEARCH_URL = "http://127.0.0.1:4310";
+
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -84,7 +86,7 @@ async function startAutomaticSearch() {
 
         const response =
             await fetch(
-                "/api/automatic-search",
+                `${CAMIS_LOCAL_SEARCH_URL}/api/automatic-search`,
                 {
                     method: "POST",
                     headers: {
@@ -184,7 +186,7 @@ async function waitForAutomaticSearchCompletion() {
 
         const response =
             await fetch(
-                "/api/automatic-search/status",
+                `${CAMIS_LOCAL_SEARCH_URL}/api/automatic-search/status`,
                 {
                     cache: "no-store"
                 }
