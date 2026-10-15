@@ -5,8 +5,333 @@ document.addEventListener(
     "DOMContentLoaded",
     () => {
         loadAutomatedFindings();
+        initialiseAutomaticSearch();
     }
 );
+
+
+// ============================================================
+// AUTOMATIC FACEBOOK SEARCH
+// ============================================================
+
+let automaticSearchRunning = false;
+
+
+function initialiseAutomaticSearch() {
+
+    const button =
+        document.getElementById(
+            "automaticSearchButton"
+        );
+
+    if (!button) {
+        return;
+    }
+
+    button.addEventListener(
+        "click",
+        startAutomaticSearch
+    );
+}
+
+
+async function startAutomaticSearch() {
+
+    if (automaticSearchRunning) {
+        return;
+    }
+
+    const button =
+        document.getElementById(
+            "automaticSearchButton"
+        );
+
+    const status =
+        document.getElementById(
+            "automaticSearchStatus"
+        );
+
+    if (!button || !status) {
+        return;
+    }
+
+
+    const confirmed =
+        window.confirm(
+            "Start Automatic Facebook Search?\n\n" +
+            "CAMIS will run the configured Facebook discovery queries. " +
+            "Previously captured post URLs will be skipped, and only new " +
+            "potential concerns will be sent to the temporary review queue."
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    automaticSearchRunning = true;
+
+    button.disabled = true;
+    button.textContent =
+        "Searching...";
+
+    status.textContent =
+        "Status: Starting automatic Facebook search...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/automatic-search",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        const result =
+            await response
+                .json()
+                .catch(
+                    () => ({})
+                );
+
+
+        if (!response.ok || !result.success) {
+
+            throw new Error(
+                result.error ||
+                "Unable to start the automatic Facebook search."
+            );
+        }
+
+
+        /*
+         * The backend may either:
+         *
+         * 1. wait for the search to finish and return the final result, or
+         * 2. start the local search launcher and return a running state.
+         *
+         * This frontend supports both patterns.
+         */
+
+        if (
+            result.status === "running" ||
+            result.running === true
+        ) {
+
+            status.textContent =
+                "Status: Automatic Facebook search started. " +
+                "CAMIS is searching the configured discovery queries.";
+
+            await waitForAutomaticSearchCompletion();
+
+        } else {
+
+            showAutomaticSearchResult(
+                result
+            );
+
+            await loadAutomatedFindings();
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        status.textContent =
+            "Status: Search could not be started. " +
+            (
+                error.message ||
+                "Automatic search service unavailable."
+            );
+
+    } finally {
+
+        automaticSearchRunning = false;
+
+        button.disabled = false;
+        button.textContent =
+            "Automatic Search";
+    }
+}
+
+
+async function waitForAutomaticSearchCompletion() {
+
+    const status =
+        document.getElementById(
+            "automaticSearchStatus"
+        );
+
+    const maximumChecks = 180;
+
+    for (
+        let check = 0;
+        check < maximumChecks;
+        check += 1
+    ) {
+
+        await delay(2000);
+
+
+        const response =
+            await fetch(
+                "/api/automatic-search/status",
+                {
+                    cache: "no-store"
+                }
+            );
+
+
+        const result =
+            await response
+                .json()
+                .catch(
+                    () => ({})
+                );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.error ||
+                "Unable to read automatic search status."
+            );
+        }
+
+
+        if (
+            result.status === "running" ||
+            result.running === true
+        ) {
+
+            status.textContent =
+                result.message ||
+                "Status: Searching Facebook...";
+
+            continue;
+        }
+
+
+        if (
+            result.status === "failed" ||
+            result.success === false
+        ) {
+
+            throw new Error(
+                result.error ||
+                "Automatic Facebook search failed."
+            );
+        }
+
+
+        showAutomaticSearchResult(
+            result
+        );
+
+        await loadAutomatedFindings();
+
+        return;
+    }
+
+
+    throw new Error(
+        "Automatic Facebook search is still running. " +
+        "Please refresh the page shortly to check the review queue."
+    );
+}
+
+
+function showAutomaticSearchResult(result) {
+
+    const status =
+        document.getElementById(
+            "automaticSearchStatus"
+        );
+
+    if (!status) {
+        return;
+    }
+
+
+    const summary =
+        result.summary ||
+        result.report ||
+        {};
+
+
+    const parts = [
+        "Status: Automatic Search Complete"
+    ];
+
+
+    if (
+        Number.isFinite(
+            Number(summary.candidatesAttempted)
+        )
+    ) {
+        parts.push(
+            `Candidates attempted: ${Number(summary.candidatesAttempted)}`
+        );
+    }
+
+
+    if (
+        Number.isFinite(
+            Number(summary.alreadyCaptured)
+        )
+    ) {
+        parts.push(
+            `Already captured: ${Number(summary.alreadyCaptured)}`
+        );
+    }
+
+
+    if (
+        Number.isFinite(
+            Number(summary.successfullyInspected)
+        )
+    ) {
+        parts.push(
+            `Successfully inspected: ${Number(summary.successfullyInspected)}`
+        );
+    }
+
+
+    if (
+        Number.isFinite(
+            Number(summary.newFindings)
+        )
+    ) {
+        parts.push(
+            `New findings: ${Number(summary.newFindings)}`
+        );
+    }
+
+
+    status.textContent =
+        parts.join(" | ");
+}
+
+
+function delay(milliseconds) {
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                milliseconds
+            )
+    );
+}
 
 
 // ============================================================
