@@ -205,6 +205,67 @@ function isFacebookUrl(value) {
 
 
 // ------------------------------------------------------------
+// Normalize Facebook post URL for persistent duplicate recognition
+// ------------------------------------------------------------
+
+function normalizeFacebookPostUrl(value) {
+    try {
+        const url = new URL(value);
+
+        if (
+            url.hostname !== "facebook.com" &&
+            url.hostname !== "www.facebook.com"
+        ) {
+            return String(value || "").trim();
+        }
+
+        url.protocol = "https:";
+        url.hostname = "www.facebook.com";
+        url.hash = "";
+
+        [
+            "s",
+            "mibextid",
+            "ref",
+            "refsrc",
+            "__tn__",
+            "__cft__"
+        ].forEach(key => url.searchParams.delete(key));
+
+        // Facebook photo identity is the fbid. "set" and group context
+        // can vary while still pointing to the same underlying photo/post.
+        if (
+            url.pathname === "/photo/" &&
+            url.searchParams.get("fbid")
+        ) {
+            return (
+                "https://www.facebook.com/photo/?fbid=" +
+                url.searchParams.get("fbid")
+            );
+        }
+
+        let pathname =
+            url.pathname.replace(/\/+$/, "");
+
+        if (!pathname) {
+            pathname = "/";
+        }
+
+        const query =
+            url.searchParams.toString();
+
+        return (
+            `https://www.facebook.com${pathname}` +
+            (query ? `?${query}` : "")
+        );
+
+    } catch {
+        return String(value || "").trim();
+    }
+}
+
+
+// ------------------------------------------------------------
 // Determine permanent table from Original Post Date
 // ------------------------------------------------------------
 
@@ -333,55 +394,81 @@ function determineCollectionTable(
 // Check whether URL already exists in permanent records
 // ------------------------------------------------------------
 
-async function findPermanentDuplicate(
-    postUrl
-) {
+async function findPermanentDuplicate(postUrl) {
 
-    for (
-        const tableName
-        of CAMIS_TABLES
-    ) {
+    const normalizedTarget =
+        normalizeFacebookPostUrl(postUrl);
 
-        const {
-            data,
-            error
-        } =
+    for (const tableName of CAMIS_TABLES) {
+
+        const { data, error } =
             await supabase
                 .from(tableName)
-                .select(
-                    '"Post ID", "Post URL"'
-                )
-                .eq(
-                    "Post URL",
-                    postUrl
-                )
-                .limit(1);
-
+                .select('"Post ID", "Post URL"');
 
         if (error) {
-
             throw new Error(
                 `Duplicate check failed in ${tableName}: ${error.message}`
             );
         }
 
+        const match =
+            (data || []).find(
+                record =>
+                    normalizeFacebookPostUrl(
+                        record["Post URL"]
+                    ) === normalizedTarget
+            );
 
-        if (
-            data &&
-            data.length > 0
-        ) {
-
+        if (match) {
             return {
                 duplicate: true,
                 tableName,
-                record: data[0]
+                record: match,
+                normalizedPostUrl: normalizedTarget
             };
         }
     }
 
+    return {
+        duplicate: false,
+        normalizedPostUrl: normalizedTarget
+    };
+}
+
+
+// ------------------------------------------------------------
+// Check temporary review queue for same normalized Facebook post
+// ------------------------------------------------------------
+
+async function findQueueDuplicate(postUrl) {
+
+    const normalizedTarget =
+        normalizeFacebookPostUrl(postUrl);
+
+    const { data, error } =
+        await supabase
+            .from("automated_review_queue")
+            .select('"Queue ID", "Post URL"');
+
+    if (error) {
+        throw new Error(
+            `Queue duplicate check failed: ${error.message}`
+        );
+    }
+
+    const match =
+        (data || []).find(
+            record =>
+                normalizeFacebookPostUrl(
+                    record["Post URL"]
+                ) === normalizedTarget
+        );
 
     return {
-        duplicate: false
+        duplicate: Boolean(match),
+        record: match || null,
+        normalizedPostUrl: normalizedTarget
     };
 }
 
@@ -608,6 +695,40 @@ app.post(
 
 
             // --------------------------------------------------
+            // Prevent duplicate permanent record
+            // --------------------------------------------------
+
+            let directDuplicate;
+
+            try {
+                directDuplicate =
+                    await findPermanentDuplicate(postUrl);
+            } catch (error) {
+                console.error(
+                    "Permanent duplicate check error:",
+                    error
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message:
+                        "Unable to check existing permanent CAMIS records."
+                });
+            }
+
+            if (directDuplicate.duplicate) {
+                return res.status(409).json({
+                    success: false,
+                    duplicate: true,
+                    existingTable:
+                        directDuplicate.tableName,
+                    message:
+                        "This Facebook post already exists in permanent CAMIS records."
+                });
+            }
+
+
+            // --------------------------------------------------
             // Build permanent record
             // --------------------------------------------------
 
@@ -620,7 +741,7 @@ app.post(
                     originalPostDate,
 
                 "Post URL":
-                    postUrl.trim(),
+                    normalizeFacebookPostUrl(postUrl),
 
                 "Account Page Name":
                     accountPageName?.trim()
@@ -880,6 +1001,76 @@ app.get(
 
 
 // ============================================================
+// CHECK WHETHER FACEBOOK POST WAS ALREADY PROCESSED
+// ============================================================
+
+app.get(
+    "/api/post-status",
+    async (req, res) => {
+        try {
+            const postUrl =
+                String(req.query.postUrl || "").trim();
+
+            if (!postUrl || !isFacebookUrl(postUrl)) {
+                return res.status(400).json({
+                    success: false,
+                    error: "A valid Facebook post URL is required."
+                });
+            }
+
+            const permanent =
+                await findPermanentDuplicate(postUrl);
+
+            if (permanent.duplicate) {
+                return res.json({
+                    success: true,
+                    processed: true,
+                    location: "permanent",
+                    normalizedPostUrl:
+                        permanent.normalizedPostUrl,
+                    existingTable:
+                        permanent.tableName,
+                    existingRecordId:
+                        permanent.record["Post ID"]
+                });
+            }
+
+            const queue =
+                await findQueueDuplicate(postUrl);
+
+            if (queue.duplicate) {
+                return res.json({
+                    success: true,
+                    processed: true,
+                    location: "queue",
+                    normalizedPostUrl:
+                        queue.normalizedPostUrl,
+                    existingQueueId:
+                        queue.record["Queue ID"]
+                });
+            }
+
+            return res.json({
+                success: true,
+                processed: false,
+                location: null,
+                normalizedPostUrl:
+                    normalizeFacebookPostUrl(postUrl)
+            });
+
+        } catch (error) {
+            console.error("GET /api/post-status error:", error);
+            return res.status(500).json({
+                success: false,
+                error:
+                    "Unable to check whether the post was previously processed."
+            });
+        }
+    }
+);
+
+
+// ============================================================
 // CAMIS AUTOMATED REVIEW QUEUE
 // ============================================================
 
@@ -955,6 +1146,71 @@ app.post(
 
 
             // --------------------------------------------------
+            // Persistent duplicate recognition
+            // --------------------------------------------------
+
+            const normalizedPostUrl =
+                normalizeFacebookPostUrl(postUrl);
+
+            let permanentDuplicate;
+            let queueDuplicate;
+
+            try {
+                permanentDuplicate =
+                    await findPermanentDuplicate(
+                        normalizedPostUrl
+                    );
+
+                if (!permanentDuplicate.duplicate) {
+                    queueDuplicate =
+                        await findQueueDuplicate(
+                            normalizedPostUrl
+                        );
+                }
+            } catch (error) {
+                console.error(
+                    "Automated review duplicate check error:",
+                    error
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    error:
+                        "Unable to check whether this Facebook post was previously processed."
+                });
+            }
+
+            if (permanentDuplicate.duplicate) {
+                return res.status(409).json({
+                    success: false,
+                    duplicate: true,
+                    previouslyProcessed: true,
+                    location: "permanent",
+                    existingTable:
+                        permanentDuplicate.tableName,
+                    error:
+                        "This Facebook post was already officer-verified and exists in permanent CAMIS records."
+                });
+            }
+
+            if (
+                queueDuplicate &&
+                queueDuplicate.duplicate
+            ) {
+                return res.status(409).json({
+                    success: false,
+                    duplicate: true,
+                    previouslyProcessed: true,
+                    location: "queue",
+                    existingQueueId:
+                        queueDuplicate.record["Queue ID"],
+                    error:
+                        "This Facebook post already exists in the CAMIS automated review queue."
+                });
+            }
+
+
+            // --------------------------------------------------
             // Build temporary finding
             // --------------------------------------------------
 
@@ -964,7 +1220,7 @@ app.post(
                     platform || "Facebook",
 
                 "Post URL":
-                    postUrl.trim(),
+                    normalizedPostUrl,
 
                 "Potential Category":
                     potentialCategory.trim(),
@@ -1502,9 +1758,11 @@ app.post(
             // --------------------------------------------------
 
             const postUrl =
-                queueRecord[
-                    "Post URL"
-                ];
+                normalizeFacebookPostUrl(
+                    queueRecord[
+                        "Post URL"
+                    ]
+                );
 
 
             if (
