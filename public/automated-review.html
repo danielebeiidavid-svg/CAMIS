@@ -420,6 +420,71 @@
 
 
         /* =====================================================
+           AUTOMATIC SEARCH
+           ===================================================== */
+
+        .automatic-search-panel {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 28px;
+        }
+
+        .automatic-search-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .automatic-search-header h2 {
+            margin: 0 0 6px 0;
+        }
+
+        .automatic-search-header p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+            max-width: 850px;
+        }
+
+        .automatic-search-button {
+            min-width: 170px;
+            height: 42px;
+            padding: 0 18px;
+            border: 1px solid #0f2747;
+            border-radius: 6px;
+            background: #0f2747;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .automatic-search-button:hover {
+            background: #17385f;
+        }
+
+        .automatic-search-button:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .automatic-search-status {
+            margin-top: 16px;
+            padding: 14px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
            RESPONSIVE
            ===================================================== */
 
@@ -450,6 +515,15 @@
 
                 grid-template-columns:
                     1fr;
+            }
+
+            .automatic-search-header {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .automatic-search-button {
+                width: 100%;
             }
 
             .review-container {
@@ -600,6 +674,47 @@
 
         </section>
 
+
+
+        <!-- =================================================
+             AUTOMATIC SEARCH
+             ================================================= -->
+
+        <section class="automatic-search-panel">
+
+            <div class="automatic-search-header">
+
+                <div>
+                    <h2>Automatic Facebook Search</h2>
+
+                    <p>
+                        Start the CAMIS Facebook discovery monitor. Previously
+                        captured post URLs will be skipped, and only potential
+                        concerns requiring officer review will be added to the
+                        temporary review queue.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="automaticSearchButton"
+                    class="automatic-search-button"
+                >
+                    Automatic Search
+                </button>
+
+            </div>
+
+            <div
+                id="automaticSearchStatus"
+                class="automatic-search-status"
+                role="status"
+                aria-live="polite"
+            >
+                Status: Ready
+            </div>
+
+        </section>
 
 
         <!-- =================================================
